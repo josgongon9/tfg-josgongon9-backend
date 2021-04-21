@@ -1,4 +1,4 @@
-package com.josgongon9.tfgwebbackend.configuration;
+/*package com.josgongon9.tfgwebbackend.configuration;
 
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
@@ -19,3 +19,4 @@ public final class RestAuthenticationEntryPoint implements AuthenticationEntryPo
 	}
 }
 
+*/
