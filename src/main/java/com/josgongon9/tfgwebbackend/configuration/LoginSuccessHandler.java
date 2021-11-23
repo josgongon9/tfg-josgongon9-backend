@@ -1,4 +1,4 @@
-package com.josgongon9.tfgwebbackend.configuration;
+/*package com.josgongon9.tfgwebbackend.configuration;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
@@ -44,3 +44,4 @@ public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 	}
 
 }
+*/
