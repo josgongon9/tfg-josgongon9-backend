@@ -6,28 +6,28 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.josgongon9.tfgwebbackend.exception.EntityNotFoundException;
-import com.josgongon9.tfgwebbackend.model.ToDo;
-import com.josgongon9.tfgwebbackend.repository.ToDoRepository;
+import com.josgongon9.tfgwebbackend.model.TimeEntry;
+import com.josgongon9.tfgwebbackend.repository.TimeEntryRepository;
 
 @Service
-public class ToDoService {
+public class TimeEntryService {
 	@Autowired
-	private ToDoRepository toDoRepository;
+	private TimeEntryRepository timeEntryRepository;
 
-	public List<ToDo> findAll() {
-		return toDoRepository.findAll();
+	public List<TimeEntry> findAll() {
+		return timeEntryRepository.findAll();
 	}
 
-	public ToDo findById(String id) {
-		return toDoRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+	public TimeEntry findById(String id) {
+		return timeEntryRepository.findById(id).orElseThrow(EntityNotFoundException::new);
 	}
 
-	public ToDo save(ToDo toDo) {
-		return toDoRepository.save(toDo);
+	public TimeEntry save(TimeEntry timeEntry) {
+		return timeEntryRepository.save(timeEntry);
 	}
 
 	public void deleteById(String id) {
-		toDoRepository.deleteById(id);
+		timeEntryRepository.deleteById(id);
 	}
 
 }
