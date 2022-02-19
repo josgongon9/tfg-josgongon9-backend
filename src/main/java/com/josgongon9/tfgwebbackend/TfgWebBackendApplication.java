@@ -14,6 +14,13 @@ public class TfgWebBackendApplication  {
 		SpringApplication.run(TfgWebBackendApplication.class, args);
 	}
 
-
+	@Bean
+	public ReloadableResourceBundleMessageSource messageSource(){
+		ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();
+		messageSource.setFallbackToSystemLocale(Boolean.FALSE);
+		messageSource.setDefaultEncoding(StandardCharsets.UTF_8.name());
+		messageSource.setBasename("classpath:locale/messages");
+		return messageSource;
+	}
 
 }
