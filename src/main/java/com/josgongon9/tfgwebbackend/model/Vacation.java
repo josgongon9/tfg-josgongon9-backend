@@ -5,6 +5,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.validation.constraints.NotNull;
+import java.util.Date;
 
 @Document(collection = "vacations")
 @Data
@@ -17,6 +18,10 @@ public class Vacation {
   private String title;
   private String description;
   private boolean published;
+  private Date startDate;
+  private Date endDate;
+  private String state;
+
 
 
 

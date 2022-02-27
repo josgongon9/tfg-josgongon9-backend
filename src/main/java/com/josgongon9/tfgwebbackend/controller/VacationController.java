@@ -7,6 +7,7 @@ import java.util.Optional;
 import com.josgongon9.tfgwebbackend.model.User;
 import com.josgongon9.tfgwebbackend.repository.UserRepository;
 import com.josgongon9.tfgwebbackend.repository.VacationRepository;
+import com.josgongon9.tfgwebbackend.service.VacationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -34,10 +35,11 @@ import com.josgongon9.tfgwebbackend.model.Vacation;
 public class VacationController {
 
   @Autowired
-  VacationRepository vacationRepository;
+  VacationService vacationService;
 
   @Autowired
-  UserRepository userRepository;
+  VacationRepository vacationRepository;
+
 
   @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
   @GetMapping("/vacations")
@@ -75,15 +77,8 @@ public class VacationController {
   @PostMapping("/vacations")
   public ResponseEntity<Vacation> createVacation(@RequestBody Vacation vacation) {
     try {
-      Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-      String username = authentication.getName();
-      Vacation _vacation = vacationRepository.save(new Vacation(vacation.getId(),vacation.getTitle(), vacation.getDescription(), false));
-      User user = userRepository.findByUsername(username)
-              .orElseThrow(() -> new UsernameNotFoundException("User Not Found with username: " + username));
 
-      user.getVacations().add(_vacation);
-      userRepository.save(user);
-      return new ResponseEntity<>(_vacation, HttpStatus.CREATED);
+      return new ResponseEntity<>(vacationService.createVacation(vacation), HttpStatus.CREATED);
     } catch (Exception e) {
       return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
     }
