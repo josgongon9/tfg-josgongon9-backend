@@ -33,11 +33,16 @@ import lombok.Data;
   @Size(max = 120)
   private String password;
 
+  private Integer daysOfVacations;
+
   @DBRef
   private Set<Role> roles = new HashSet<>();
   
   @DBRef
   private List<TimeEntry> timeEntries = new ArrayList<>();
+
+  @DBRef
+  private List<Vacation> vacations = new ArrayList<>();
 
   public User() {
   }

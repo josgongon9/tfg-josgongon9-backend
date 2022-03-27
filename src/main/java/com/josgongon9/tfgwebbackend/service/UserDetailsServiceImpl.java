@@ -1,5 +1,6 @@
-package com.josgongon9.tfgwebbackend.security.services;
+package com.josgongon9.tfgwebbackend.service;
 
+import com.josgongon9.tfgwebbackend.service.UserDetailsImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

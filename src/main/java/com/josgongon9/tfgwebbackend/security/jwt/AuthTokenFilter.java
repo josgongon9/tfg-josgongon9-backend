@@ -17,7 +17,7 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import com.josgongon9.tfgwebbackend.security.services.UserDetailsServiceImpl;
+import com.josgongon9.tfgwebbackend.service.UserDetailsServiceImpl;
 
 
 public class AuthTokenFilter extends OncePerRequestFilter {
