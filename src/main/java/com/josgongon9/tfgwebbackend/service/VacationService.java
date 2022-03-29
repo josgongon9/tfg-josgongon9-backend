@@ -29,7 +29,7 @@ public class VacationService {
     }
 
 
-    private User getUser() {
+    public User getUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
         return userRepository.findByUsername(username)
