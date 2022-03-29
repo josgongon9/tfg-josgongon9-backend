@@ -1,59 +1,38 @@
 package com.josgongon9.tfgwebbackend;
 
-import com.josgongon9.tfgwebbackend.model.User;
-import com.josgongon9.tfgwebbackend.model.Vacation;
-import com.josgongon9.tfgwebbackend.repository.UserRepository;
-import com.josgongon9.tfgwebbackend.repository.VacationRepository;
-import com.josgongon9.tfgwebbackend.service.VacationService;
+import com.josgongon9.tfgwebbackend.model.Organization;
+import com.josgongon9.tfgwebbackend.repository.OrganizationRepository;
+import com.josgongon9.tfgwebbackend.service.IOrganizationService;
+import com.josgongon9.tfgwebbackend.service.impl.OrganizationServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.Date;
-import java.util.Optional;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class OrganizationsTests {
-    @Mock
-    VacationRepository vacationRepository;
-
-    @Mock
-    UserRepository userRepository;
-
     @InjectMocks
-    VacationService vacationService;
+    OrganizationServiceImpl organizationService;
 
     @Mock
-    Authentication authentication;
-    @Mock
-    SecurityContext securityContext;
+    OrganizationRepository organizationRepository;
 
+    //Dar de alta Organizaciones -> Administradores
     @Test
-    void givenValidUser_whenSaveUser_thenSucceed() {
+    void createOrganizationOK() {
         // Given
-        Vacation vacation = new Vacation("1", "Prueba", "Prueba Des", false, new Date(), new Date(), "PROPUESE");
-        User user = new User("Josemi", "prueba@gmail.com", "12345678");
-        when(vacationRepository.save(Mockito.any(Vacation.class))).thenReturn(vacation);
-        when(userRepository.save(Mockito.any(User.class))).thenReturn(null);
-        when(securityContext.getAuthentication()).thenReturn(authentication);
-        SecurityContextHolder.setContext(securityContext);
-        when(userRepository.findByUsername(null)).thenReturn(Optional.of(user));
-
-
+        Organization organization = new Organization("Mi organizacion", "Descripcion de prueba","685254120", "https://es.wikipedia.org/wiki/Wikipedia:Portada");
         // When
-        Vacation createVacation = vacationService.createVacation(vacation);
+        when(organizationRepository.save(Mockito.any(Organization.class))).thenReturn(organization);
+
+        Organization createVacation = organizationService.createOrganization(organization);
 
         // Then
-        assertNotNull(createVacation.getId());
 
     }
 
