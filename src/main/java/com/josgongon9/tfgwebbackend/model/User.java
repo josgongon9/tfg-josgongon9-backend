@@ -44,6 +44,9 @@ import lombok.Data;
   @DBRef
   private List<Vacation> vacations = new ArrayList<>();
 
+  @DBRef
+  private List<Organization> organizations;
+
   public User() {
   }
 
