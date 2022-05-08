@@ -89,4 +89,66 @@ public class UserController {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    @GetMapping("/AllByRol/{role}")
+    public ResponseEntity<List<User>> getAllByRol(@PathVariable String role) {
+        try {
+            ERole erole = ERole.valueOf(role);
+            List<User> rolList = new ArrayList<User>();
+            Role modRole = roleRepository.findByName(erole)
+                    .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+            ObjectId obj = new ObjectId( modRole.getId());
+
+            rolList = userRepository.findAllByRole(obj);
+
+
+
+            if (rolList.isEmpty()) {
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            }
+
+            return new ResponseEntity<>(rolList, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("/findByUsername")
+    public ResponseEntity<List<User>> findByUsername(@RequestParam("username") String username) {
+        try {
+            List<User> userList = new ArrayList<User>();
+            userList = userRepository.findAllByUsernameLike(username);
+
+
+
+            if (userList.isEmpty()) {
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            }
+
+            return new ResponseEntity<>(userList, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("/moderadoresByOrganization")
+    public ResponseEntity<List<User>> findModeradoresByOrganization(@RequestParam("idOrg") String sIdOrg) {
+        try {
+            List<User> userList = new ArrayList<User>();
+            ObjectId idOrg = new ObjectId(sIdOrg);
+            userList = userRepository.findModeradoresByOrganization(idOrg);
+
+
+
+            if (userList.isEmpty()) {
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            }
+
+            return new ResponseEntity<>(userList, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+
 }
