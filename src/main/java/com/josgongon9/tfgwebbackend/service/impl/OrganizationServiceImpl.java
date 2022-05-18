@@ -86,7 +86,7 @@ public class OrganizationServiceImpl extends BasicServiceImpl implements IOrgani
         ObjectId idOrg = new ObjectId(id);
         List<User> modList = userRepository.findModeradoresByOrganization(idOrg);
         for (User mod : modList) {
-            mod.getOrganizations().remove(id);
+            mod.getOrganizations().removeIf(x -> x.getId().equals(id));
             userRepository.save(mod);
         }
         organizationRepository.deleteById(id);
