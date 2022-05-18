@@ -3,8 +3,10 @@ package com.josgongon9.tfgwebbackend.controller;
 import com.josgongon9.tfgwebbackend.model.ERole;
 import com.josgongon9.tfgwebbackend.model.Role;
 import com.josgongon9.tfgwebbackend.model.User;
+import com.josgongon9.tfgwebbackend.model.response.UserResponse;
 import com.josgongon9.tfgwebbackend.repository.RoleRepository;
 import com.josgongon9.tfgwebbackend.repository.UserRepository;
+import com.josgongon9.tfgwebbackend.service.impl.UserServiceImpl;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -25,6 +27,9 @@ public class UserController {
 
     @Autowired
     RoleRepository roleRepository;
+
+    @Autowired
+    UserServiceImpl userServiceImpl;
 
 
     @GetMapping("/all")
@@ -68,16 +73,16 @@ public class UserController {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
     @GetMapping("/listMod")
     public ResponseEntity<List<User>> getAllMod() {
         try {
             List<User> modList = new ArrayList<User>();
-             Role modRole = roleRepository.findByName(ERole.ROLE_MODERATOR)
+            Role modRole = roleRepository.findByName(ERole.ROLE_MODERATOR)
                     .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-            ObjectId obj = new ObjectId( modRole.getId());
+            ObjectId obj = new ObjectId(modRole.getId());
 
             modList = userRepository.findAllByRole(obj);
-
 
 
             if (modList.isEmpty()) {
@@ -97,10 +102,9 @@ public class UserController {
             List<User> rolList = new ArrayList<User>();
             Role modRole = roleRepository.findByName(erole)
                     .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-            ObjectId obj = new ObjectId( modRole.getId());
+            ObjectId obj = new ObjectId(modRole.getId());
 
             rolList = userRepository.findAllByRole(obj);
-
 
 
             if (rolList.isEmpty()) {
@@ -118,7 +122,6 @@ public class UserController {
         try {
             List<User> userList = new ArrayList<User>();
             userList = userRepository.findAllByUsernameLike(username);
-
 
 
             if (userList.isEmpty()) {
@@ -139,7 +142,6 @@ public class UserController {
             userList = userRepository.findModeradoresByOrganization(idOrg);
 
 
-
             if (userList.isEmpty()) {
                 return new ResponseEntity<>(HttpStatus.NO_CONTENT);
             }
@@ -147,6 +149,36 @@ public class UserController {
             return new ResponseEntity<>(userList, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("/exportData/{id}")
+    public ResponseEntity exportData(@PathVariable("id") String id) {
+        try {
+
+            return new ResponseEntity<>(userServiceImpl.generateDataToExport(id), HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @DeleteMapping("/deleteUser/{id}")
+    public ResponseEntity deleteVacation(@PathVariable("id") String id) {
+        try {
+            userRepository.deleteById(id);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
+    @PutMapping("/update/{id}")
+    public ResponseEntity updateVacation(@PathVariable("id") String id, @RequestBody UserResponse user) {
+        try {
+            return new ResponseEntity<>(userServiceImpl.update(id, user), HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
