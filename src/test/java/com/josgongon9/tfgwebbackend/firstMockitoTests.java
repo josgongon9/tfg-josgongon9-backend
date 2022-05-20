@@ -1,7 +1,9 @@
 package com.josgongon9.tfgwebbackend;
 
+import com.josgongon9.tfgwebbackend.exception.MyOwnException;
 import com.josgongon9.tfgwebbackend.model.User;
 import com.josgongon9.tfgwebbackend.model.Vacation;
+import com.josgongon9.tfgwebbackend.model.response.VacationResponse;
 import com.josgongon9.tfgwebbackend.repository.UserRepository;
 import com.josgongon9.tfgwebbackend.repository.VacationRepository;
 import com.josgongon9.tfgwebbackend.service.impl.VacationServiceImpl;
@@ -40,9 +42,10 @@ public class firstMockitoTests {
     SecurityContext securityContext;
 
     @Test
-    void givenValidUser_whenSaveUser_thenSucceed() {
+    void givenValidUser_whenSaveUser_thenSucceed() throws MyOwnException {
         // Given
         Vacation vacation = new Vacation("1", "Prueba", "Prueba Des", false, new Date(), new Date(), "PROPUESE");
+        VacationResponse vacationR = new VacationResponse(vacation);
         User user = new User("Josemi", "prueba@gmail.com", "12345678");
         when(vacationRepository.save(Mockito.any(Vacation.class))).thenReturn(vacation);
         when(userRepository.save(Mockito.any(User.class))).thenReturn(null);
@@ -52,7 +55,7 @@ public class firstMockitoTests {
 
 
         // When
-        Vacation createVacation = vacationService.createVacation(vacation);
+        Vacation createVacation = vacationService.createVacation(vacationR);
 
         // Then
         assertNotNull(createVacation.getId());
