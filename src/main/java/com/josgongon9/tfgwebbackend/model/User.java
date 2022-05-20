@@ -9,6 +9,7 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
+import lombok.EqualsAndHashCode;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -16,6 +17,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import lombok.Data;
 
 @Document(collection = "users")
+@EqualsAndHashCode
 @Data public class User {
   @Id
   private String id;
@@ -43,6 +45,9 @@ import lombok.Data;
 
   @DBRef
   private List<Vacation> vacations = new ArrayList<>();
+
+  @DBRef
+  private List<Organization> organizations = new ArrayList<>();
 
   public User() {
   }
