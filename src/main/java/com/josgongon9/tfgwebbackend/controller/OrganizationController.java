@@ -1,8 +1,6 @@
 package com.josgongon9.tfgwebbackend.controller;
 
 import com.josgongon9.tfgwebbackend.model.Organization;
-import com.josgongon9.tfgwebbackend.model.User;
-import com.josgongon9.tfgwebbackend.model.Organization;
 import com.josgongon9.tfgwebbackend.model.response.OrganizationResponse;
 import com.josgongon9.tfgwebbackend.repository.OrganizationRepository;
 import com.josgongon9.tfgwebbackend.repository.UserRepository;
@@ -14,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -47,7 +46,8 @@ public class OrganizationController {
 
             return new ResponseEntity<>(organizations, HttpStatus.OK);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());        }
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
     }
 
     @PreAuthorize("hasRole('ADMIN')")
@@ -83,6 +83,7 @@ public class OrganizationController {
 
         }
     }
+
     @PreAuthorize("hasRole('MODERATOR') or hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity deleteOrganization(@PathVariable("id") String id) {
@@ -102,6 +103,23 @@ public class OrganizationController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
 
+        }
+    }
+
+    @GetMapping("/findByName")
+    public ResponseEntity findByName(@RequestParam("name") String name) {
+        try {
+            List<Organization> organizationList = new ArrayList<Organization>();
+            organizationList = organizationRepository.findAllByNameLike(name);
+
+
+            if (organizationList.isEmpty()) {
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            }
+
+            return new ResponseEntity<>(organizationList, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 

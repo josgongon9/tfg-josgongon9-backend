@@ -4,7 +4,7 @@ import com.josgongon9.tfgwebbackend.model.User;
 import com.josgongon9.tfgwebbackend.model.Vacation;
 import com.josgongon9.tfgwebbackend.repository.UserRepository;
 import com.josgongon9.tfgwebbackend.repository.VacationRepository;
-import com.josgongon9.tfgwebbackend.service.VacationService;
+import com.josgongon9.tfgwebbackend.service.impl.VacationServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -32,7 +32,7 @@ public class firstMockitoTests {
     UserRepository userRepository;
 
     @InjectMocks
-    VacationService vacationService;
+    VacationServiceImpl vacationService;
 
     @Mock
     Authentication authentication;

@@ -1,5 +1,6 @@
 package com.josgongon9.tfgwebbackend.controller;
 
+import com.josgongon9.tfgwebbackend.exception.MyOwnException;
 import com.josgongon9.tfgwebbackend.model.ERole;
 import com.josgongon9.tfgwebbackend.model.Role;
 import com.josgongon9.tfgwebbackend.model.User;
@@ -78,8 +79,7 @@ public class UserController {
     public ResponseEntity<List<User>> getAllMod() {
         try {
             List<User> modList = new ArrayList<User>();
-            Role modRole = roleRepository.findByName(ERole.ROLE_MODERATOR)
-                    .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+            Role modRole = roleRepository.findByName(ERole.ROLE_MODERATOR).orElseThrow(() -> new RuntimeException("Error: Role is not found."));
             ObjectId obj = new ObjectId(modRole.getId());
 
             modList = userRepository.findAllByRole(obj);
@@ -100,8 +100,7 @@ public class UserController {
         try {
             ERole erole = ERole.valueOf(role);
             List<User> rolList = new ArrayList<User>();
-            Role modRole = roleRepository.findByName(erole)
-                    .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+            Role modRole = roleRepository.findByName(erole).orElseThrow(() -> new RuntimeException("Error: Role is not found."));
             ObjectId obj = new ObjectId(modRole.getId());
 
             rolList = userRepository.findAllByRole(obj);
@@ -129,6 +128,17 @@ public class UserController {
             }
 
             return new ResponseEntity<>(userList, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("/findById/{id}")
+    public ResponseEntity findById(@PathVariable("id") String id) {
+        try {
+            User userRes = userRepository.findById(id).orElseThrow(() -> new MyOwnException("Usuario no encontrado"));
+
+            return new ResponseEntity<>(userRes, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }

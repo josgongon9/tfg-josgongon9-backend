@@ -25,6 +25,9 @@ public interface UserRepository extends MongoRepository<User, String> {
   @Query("{'organizations' :{'$ref' : 'organizations' , '$id' : ?0}}")
   List<User> findModeradoresByOrganization(ObjectId id);
 
+  @Query("{'vacations' :{'$ref' : 'vacations' , '$id' : ?0}}")
+  List<User> findUserByVacation(ObjectId id);
+
   List<User> findAllByUsernameLike(String username);
 
   /*@Query(value = "{'organizations' :{'$ref' : 'organizations' , '$id' : ?0}}", delete = true)

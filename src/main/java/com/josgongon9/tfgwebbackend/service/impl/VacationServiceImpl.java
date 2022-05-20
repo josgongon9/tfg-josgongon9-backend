@@ -1,23 +1,27 @@
-package com.josgongon9.tfgwebbackend.service;
+package com.josgongon9.tfgwebbackend.service.impl;
 
+import com.josgongon9.tfgwebbackend.exception.MyOwnException;
 import com.josgongon9.tfgwebbackend.model.User;
 import com.josgongon9.tfgwebbackend.model.Vacation;
 import com.josgongon9.tfgwebbackend.repository.UserRepository;
 import com.josgongon9.tfgwebbackend.repository.VacationRepository;
+import com.josgongon9.tfgwebbackend.service.IVacationService;
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Service
-public class VacationService {
+public class VacationServiceImpl extends BasicServiceImpl implements IVacationService{
 
     @Autowired
     VacationRepository vacationRepository;
 
-    @Autowired
-    UserRepository userRepository;
 
 
     public Vacation createVacation(Vacation vacation) {
@@ -29,13 +33,27 @@ public class VacationService {
         return _vacation;
     }
 
+    public List<Vacation> getAllByUser(String userId) throws MyOwnException {
+        List<Vacation> vacations = new ArrayList<Vacation>();
 
-    public User getUser() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName();
-        return userRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User Not Found with username: " + username));
+        User userRes = userRepository.findById(userId).orElseThrow(() -> new MyOwnException("Usuario no encontrado"));
 
+        vacations = userRes.getVacations();
+
+        return vacations;
     }
+
+
+    public void deleteVacation(String id) {
+        ObjectId idVac = new ObjectId(id);
+        List<User> userList = userRepository.findUserByVacation(idVac);
+        for (User mod : userList) {
+            mod.getOrganizations().removeIf(x -> x.getId().equals(id));
+            userRepository.save(mod);
+        }
+
+        vacationRepository.deleteById(id);
+    }
+
 
 }
