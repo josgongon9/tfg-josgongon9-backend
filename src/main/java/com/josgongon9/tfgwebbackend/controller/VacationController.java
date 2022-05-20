@@ -1,7 +1,7 @@
 package com.josgongon9.tfgwebbackend.controller;
 
-import com.josgongon9.tfgwebbackend.model.User;
 import com.josgongon9.tfgwebbackend.model.Vacation;
+import com.josgongon9.tfgwebbackend.model.response.VacationResponse;
 import com.josgongon9.tfgwebbackend.repository.VacationRepository;
 import com.josgongon9.tfgwebbackend.service.IVacationService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,7 +41,7 @@ public class VacationController {
 
             return new ResponseEntity<>(vacations, HttpStatus.OK);
         } catch (Exception e) {
-          return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
 
@@ -81,12 +81,12 @@ public class VacationController {
 
     @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
     @PostMapping("/vacations")
-    public ResponseEntity<Vacation> createVacation(@RequestBody Vacation vacation) {
+    public ResponseEntity createVacation(@RequestBody VacationResponse vacation) {
         try {
 
             return new ResponseEntity<>(vacationService.createVacation(vacation), HttpStatus.CREATED);
         } catch (Exception e) {
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
 
