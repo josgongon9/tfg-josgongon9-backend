@@ -108,6 +108,33 @@ public class OrganizationServiceImpl extends BasicServiceImpl implements IOrgani
 
         return organizationRes;
     }
+
+    @Override
+    public Organization getOrganizationByUser(String idUser) throws MyOwnException {
+        User user = userRepository.findById(idUser).orElseThrow(() -> new MyOwnException("Usuario no encontrado"));
+
+        Organization organization = user.getOrganizations().stream().findFirst().get();
+
+
+        return organization;
+    }
+
+    @Override
+    public void updateMods(String id, String idUser) throws Exception {
+        Organization organizationBBDD = organizationRepository.findById(id).orElseThrow(() -> new MyOwnException("Organizacion no encontrada"));
+        User mod = userRepository.findById(idUser).orElseThrow(() -> new MyOwnException("Usuario no encontrado"));
+        ObjectId idOrg = new ObjectId(id);
+        List<User> listModByOrg = userRepository.findModeradoresByOrganization(idOrg);
+
+
+        if (!listModByOrg.contains(mod)) {
+            mod.getOrganizations().add(organizationBBDD);
+        } else {
+            mod.getOrganizations().removeIf(x -> x.getId().equals(idUser));
+        }
+        userRepository.save(mod);
+
+    }
 }
 
 

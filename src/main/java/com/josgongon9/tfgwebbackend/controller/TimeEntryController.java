@@ -21,7 +21,7 @@ import com.josgongon9.tfgwebbackend.model.TimeEntry;
 import com.josgongon9.tfgwebbackend.model.User;
 import com.josgongon9.tfgwebbackend.repository.UserRepository;
 import com.josgongon9.tfgwebbackend.security.jwt.JwtUtils;
-import com.josgongon9.tfgwebbackend.service.TimeEntryService;
+import com.josgongon9.tfgwebbackend.service.impl.TimeEntryServiceImpl;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
@@ -29,7 +29,7 @@ import com.josgongon9.tfgwebbackend.service.TimeEntryService;
 public class TimeEntryController {
 
 	@Autowired
-	TimeEntryService timeEntryService;
+	TimeEntryServiceImpl timeEntryServiceImpl;
 
 	@Autowired
 	UserRepository userRepository;
@@ -66,7 +66,7 @@ public class TimeEntryController {
 			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 			String username = authentication.getName();
 
-			TimeEntry _timeEntry = timeEntryService.save(new TimeEntry(timeEntry.getDate(), timeEntry.getTotalTime(),
+			TimeEntry _timeEntry = timeEntryServiceImpl.save(new TimeEntry(timeEntry.getDate(), timeEntry.getTotalTime(),
 					timeEntry.getComment()/* , timeEntry.getUser() */));
 
 			User user = userRepository.findByUsername((String) username)

@@ -16,7 +16,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 import com.josgongon9.tfgwebbackend.security.jwt.AuthEntryPointJwt;
 import com.josgongon9.tfgwebbackend.security.jwt.AuthTokenFilter;
-import com.josgongon9.tfgwebbackend.service.UserDetailsServiceImpl;
+import com.josgongon9.tfgwebbackend.service.impl.UserDetailsServiceImpl;
 
 
 

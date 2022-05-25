@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
-import com.josgongon9.tfgwebbackend.service.UserDetailsImpl;
+import com.josgongon9.tfgwebbackend.service.impl.UserDetailsImpl;
 
 import io.jsonwebtoken.*;
 

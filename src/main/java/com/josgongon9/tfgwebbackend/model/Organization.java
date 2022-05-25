@@ -36,6 +36,8 @@ public class Organization {
     private String city;
     @DBRef
     private List<User> usuarios = new ArrayList<>();
+    @DBRef
+    private List<Alert> alerts = new ArrayList<>();
 
 
 

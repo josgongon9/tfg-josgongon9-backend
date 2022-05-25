@@ -1,4 +1,4 @@
-package com.josgongon9.tfgwebbackend.service;
+package com.josgongon9.tfgwebbackend.service.impl;
 
 import java.util.List;
 
@@ -10,7 +10,7 @@ import com.josgongon9.tfgwebbackend.model.TimeEntry;
 import com.josgongon9.tfgwebbackend.repository.TimeEntryRepository;
 
 @Service
-public class TimeEntryService {
+public class TimeEntryServiceImpl {
 	@Autowired
 	private TimeEntryRepository timeEntryRepository;
 

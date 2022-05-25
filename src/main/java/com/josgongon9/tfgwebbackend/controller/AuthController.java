@@ -27,7 +27,7 @@ import com.josgongon9.tfgwebbackend.payload.request.LoginRequest;
 import com.josgongon9.tfgwebbackend.payload.request.SignupRequest;
 import com.josgongon9.tfgwebbackend.payload.response.JwtResponse;
 import com.josgongon9.tfgwebbackend.payload.response.MessageResponse;
-import com.josgongon9.tfgwebbackend.service.UserDetailsImpl;
+import com.josgongon9.tfgwebbackend.service.impl.UserDetailsImpl;
 import com.josgongon9.tfgwebbackend.repository.UserRepository;
 import com.josgongon9.tfgwebbackend.repository.RoleRepository;
 import com.josgongon9.tfgwebbackend.security.jwt.JwtUtils;

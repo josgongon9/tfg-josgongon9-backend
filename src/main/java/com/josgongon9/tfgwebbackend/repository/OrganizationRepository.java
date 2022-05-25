@@ -2,7 +2,9 @@ package com.josgongon9.tfgwebbackend.repository;
 
 import com.josgongon9.tfgwebbackend.model.Organization;
 import com.josgongon9.tfgwebbackend.model.User;
+import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.mongodb.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -16,5 +18,6 @@ public interface OrganizationRepository extends MongoRepository<Organization, St
 
     List<Organization> findAllByNameLike(String name);
 
-
+    @Query("{'alerts' :{'$ref' : 'alerts' , '$id' : ?0}}")
+    Organization findOrganizationByAlert(ObjectId id);
 }
