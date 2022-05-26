@@ -84,7 +84,7 @@ public class OrganizationServiceImpl extends BasicServiceImpl implements IOrgani
     @Override
     public void deleteOrganization(String id) throws Exception {
         ObjectId idOrg = new ObjectId(id);
-        List<User> modList = userRepository.findModeradoresByOrganization(idOrg);
+        List<User> modList = userRepository.findUserByOrganizations(idOrg);
         for (User mod : modList) {
             mod.getOrganizations().removeIf(x -> x.getId().equals(id));
             userRepository.save(mod);
@@ -111,9 +111,8 @@ public class OrganizationServiceImpl extends BasicServiceImpl implements IOrgani
 
     @Override
     public Organization getOrganizationByUser(String idUser) throws MyOwnException {
-        User user = userRepository.findById(idUser).orElseThrow(() -> new MyOwnException("Usuario no encontrado"));
-
-        Organization organization = user.getOrganizations().stream().findFirst().get();
+        ObjectId userId = new ObjectId(idUser);
+        Organization organization = organizationRepository.findOrganizationByUsuarios(userId);
 
 
         return organization;
@@ -124,16 +123,26 @@ public class OrganizationServiceImpl extends BasicServiceImpl implements IOrgani
         Organization organizationBBDD = organizationRepository.findById(id).orElseThrow(() -> new MyOwnException("Organizacion no encontrada"));
         User mod = userRepository.findById(idUser).orElseThrow(() -> new MyOwnException("Usuario no encontrado"));
         ObjectId idOrg = new ObjectId(id);
-        List<User> listModByOrg = userRepository.findModeradoresByOrganization(idOrg);
+        List<User> listModByOrg = userRepository.findUserByOrganizations(idOrg);
 
-
-        if (!listModByOrg.contains(mod)) {
+        if (!listModByOrg.stream().anyMatch(x -> x.getId().equals(idUser))){
             mod.getOrganizations().add(organizationBBDD);
         } else {
-            mod.getOrganizations().removeIf(x -> x.getId().equals(idUser));
+            mod.getOrganizations().removeIf(x -> x.getId().equals(id));
         }
         userRepository.save(mod);
 
+    }
+
+    @Override
+    public List<Organization> getAll() {
+        List<Organization> listOrg = new ArrayList<>();
+        if(this.getRoles().contains(ERole.ROLE_ADMIN)) {
+            listOrg = organizationRepository.findAll();
+        }else if (this.getRoles().contains(ERole.ROLE_MODERATOR)){
+            listOrg = this.getUser().getOrganizations();
+        }
+        return listOrg;
     }
 }
 

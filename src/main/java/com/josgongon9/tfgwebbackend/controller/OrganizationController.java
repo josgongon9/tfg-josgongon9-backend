@@ -26,12 +26,12 @@ public class OrganizationController {
     OrganizationRepository organizationRepository;
 
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize(" hasRole('MODERATOR') or hasRole('ADMIN')")
     @GetMapping("/all")
-    public ResponseEntity getAllOrganizations(@RequestHeader String authorization) {
+    public ResponseEntity getAllOrganizations() {
         try {
+            List<Organization> organizations = organizationService.getAll();
 
-            List<Organization> organizations = organizationRepository.findAll();
 
             if (organizations.isEmpty()) {
                 return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -116,7 +116,7 @@ public class OrganizationController {
     @PutMapping("/updateMods")
     public ResponseEntity updateMods(@RequestParam("id") String id, @RequestParam("idUser") String idUser) {
         try {
-            organizationService.updateUsers(id, idUser);
+            organizationService.updateMods(id, idUser);
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());

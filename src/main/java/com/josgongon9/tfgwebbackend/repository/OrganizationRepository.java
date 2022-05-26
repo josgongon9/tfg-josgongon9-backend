@@ -20,4 +20,7 @@ public interface OrganizationRepository extends MongoRepository<Organization, St
 
     @Query("{'alerts' :{'$ref' : 'alerts' , '$id' : ?0}}")
     Organization findOrganizationByAlert(ObjectId id);
+
+    Organization findOrganizationByUsuarios(ObjectId id);
+
 }
