@@ -134,6 +134,28 @@ public class UserController {
         }
     }
 
+
+    @GetMapping("/findByUserAndRol")
+    public ResponseEntity<List<User>> getAllByRol(@RequestParam("username") String username,@RequestParam("role") String role) {
+        try {
+            ERole erole = ERole.valueOf(role);
+            List<User> rolList = new ArrayList<User>();
+            Role modRole = roleRepository.findByName(erole).orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+            ObjectId obj = new ObjectId(modRole.getId());
+
+            rolList = userRepository.findAllByRolesAndUsernameLike(obj, username);
+
+
+            if (rolList.isEmpty()) {
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            }
+
+            return new ResponseEntity<>(rolList, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
     @GetMapping("/findById/{id}")
     public ResponseEntity findById(@PathVariable("id") String id) {
         try {

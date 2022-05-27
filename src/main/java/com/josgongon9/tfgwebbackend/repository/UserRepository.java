@@ -22,6 +22,9 @@ public interface UserRepository extends MongoRepository<User, String> {
   @Query("{'roles' :{'$ref' : 'roles' , '$id' : ?0}}")
   List<User> findAllByRole(ObjectId id);
 
+  @Query("{'roles' :{'$ref' : 'roles' , '$id' : ?0}, 'username' : /.*?1.*/}")
+  List<User> findAllByRolesAndUsernameLike(ObjectId id, String username);
+
   List<User> findUserByOrganizations(ObjectId id);
 
   @Query("{'vacations' :{'$ref' : 'vacations' , '$id' : ?0}}")
