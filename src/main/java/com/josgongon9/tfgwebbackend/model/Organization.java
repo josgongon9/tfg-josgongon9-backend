@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.DocumentReference;
 
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
@@ -34,8 +35,10 @@ public class Organization {
     private String country;
     private String province;
     private String city;
-    @DBRef
+    @DocumentReference
     private List<User> usuarios = new ArrayList<>();
+    @DBRef(lazy = true)
+    private List<Alert> alerts = new ArrayList<>();
 
 
 

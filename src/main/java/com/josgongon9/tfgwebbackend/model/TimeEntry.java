@@ -1,36 +1,38 @@
 package com.josgongon9.tfgwebbackend.model;
 
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
-
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import lombok.Data;
+import java.time.LocalTime;
+import java.util.Date;
 
 @Document(collection = "timeEntries")
-@Data public class TimeEntry {
-  @Id
-  private String id;
+@Data
+@AllArgsConstructor
+@EqualsAndHashCode
+public class TimeEntry {
+    @Id
+    private String id;
 
-  private Date date;
-  private Double totalTime;
-  private String comment;
-  //@DBRef
-  //private User user;
+    private Date date;
+    private String comment;
+    private LocalTime startTime;
+    private LocalTime endTime;
+    private String totalTime;
 
-  public TimeEntry() {
+    public TimeEntry() {
 
-  }
+    }
 
-  public TimeEntry(Date date, Double totalTime, String comment/*, User user*/) {
-    this.date = date;
-    this.totalTime = totalTime;
-    this.comment = comment;
-    //this.user = user;
-  }
-
+    public TimeEntry(Date date, String comment, LocalTime startTime, LocalTime endTime, String totalTime) {
+        this.date = date;
+        this.comment = comment;
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.totalTime = totalTime;
+    }
 
 }
