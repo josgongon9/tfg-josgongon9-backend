@@ -15,6 +15,7 @@ import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import lombok.Data;
+import org.springframework.data.mongodb.core.mapping.DocumentReference;
 
 @Document(collection = "users")
 @EqualsAndHashCode
@@ -40,13 +41,13 @@ import lombok.Data;
   @DBRef
   private Set<Role> roles = new HashSet<>();
   
-  @DBRef
+  @DBRef(lazy = true)
   private List<TimeEntry> timeEntries = new ArrayList<>();
 
-  @DBRef
+  @DBRef(lazy = true)
   private List<Vacation> vacations = new ArrayList<>();
 
-  @DBRef
+  @DocumentReference
   private List<Organization> organizations = new ArrayList<>();
 
   public User() {

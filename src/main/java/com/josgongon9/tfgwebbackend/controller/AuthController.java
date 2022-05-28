@@ -7,18 +7,16 @@ import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
+import com.josgongon9.tfgwebbackend.exception.MyOwnException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.josgongon9.tfgwebbackend.model.ERole;
 import com.josgongon9.tfgwebbackend.model.Role;
@@ -27,7 +25,7 @@ import com.josgongon9.tfgwebbackend.payload.request.LoginRequest;
 import com.josgongon9.tfgwebbackend.payload.request.SignupRequest;
 import com.josgongon9.tfgwebbackend.payload.response.JwtResponse;
 import com.josgongon9.tfgwebbackend.payload.response.MessageResponse;
-import com.josgongon9.tfgwebbackend.service.UserDetailsImpl;
+import com.josgongon9.tfgwebbackend.service.impl.UserDetailsImpl;
 import com.josgongon9.tfgwebbackend.repository.UserRepository;
 import com.josgongon9.tfgwebbackend.repository.RoleRepository;
 import com.josgongon9.tfgwebbackend.security.jwt.JwtUtils;
@@ -56,25 +54,31 @@ public class AuthController {
 	JwtUtils jwtUtils;
 
 	@PostMapping("/signin")
-	public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
+	public ResponseEntity authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
+		try {
+			Authentication authentication = authenticationManager.authenticate(
+					new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
 
-		Authentication authentication = authenticationManager.authenticate(
-				new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
+			SecurityContextHolder.getContext().setAuthentication(authentication);
+			String jwt = jwtUtils.generateJwtToken(authentication);
 
-		SecurityContextHolder.getContext().setAuthentication(authentication);
-		String jwt = jwtUtils.generateJwtToken(authentication);
-		
-		UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();		
-		List<String> roles = userDetails.getAuthorities().stream()
-				.map(item -> item.getAuthority())
-				.collect(Collectors.toList());
+			UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+			List<String> roles = userDetails.getAuthorities().stream()
+					.map(item -> item.getAuthority())
+					.collect(Collectors.toList());
 
-		return ResponseEntity.ok(new JwtResponse(jwt, 
-												 userDetails.getId(), 
-												 userDetails.getUsername(), 
-												 userDetails.getEmail(), 
-												 roles));
+			return ResponseEntity.ok(new JwtResponse(jwt,
+					userDetails.getId(),
+					userDetails.getUsername(),
+					userDetails.getEmail(),
+					roles));
+		} catch (Exception e) {
+			return ResponseEntity
+					.badRequest()
+					.body(new MessageResponse("Credenciales Incorrectas"));
+		}
 	}
+
 
 	@PostMapping("/signup")
 	public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {

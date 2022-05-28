@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
@@ -133,6 +134,28 @@ public class UserController {
         }
     }
 
+
+    @GetMapping("/findByUserAndRol")
+    public ResponseEntity<List<User>> getAllByRol(@RequestParam("username") String username,@RequestParam("role") String role) {
+        try {
+            ERole erole = ERole.valueOf(role);
+            List<User> rolList = new ArrayList<User>();
+            Role modRole = roleRepository.findByName(erole).orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+            ObjectId obj = new ObjectId(modRole.getId());
+
+            rolList = userRepository.findAllByRolesAndUsernameLike(obj, username);
+
+
+            if (rolList.isEmpty()) {
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            }
+
+            return new ResponseEntity<>(rolList, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
     @GetMapping("/findById/{id}")
     public ResponseEntity findById(@PathVariable("id") String id) {
         try {
@@ -145,18 +168,18 @@ public class UserController {
     }
 
     @GetMapping("/moderadoresByOrganization")
-    public ResponseEntity<List<User>> findModeradoresByOrganization(@RequestParam("idOrg") String sIdOrg) {
+    public ResponseEntity findModeradoresByOrganization(@RequestParam("idOrg") String sIdOrg) {
         try {
             List<User> userList = new ArrayList<User>();
             ObjectId idOrg = new ObjectId(sIdOrg);
-            userList = userRepository.findModeradoresByOrganization(idOrg);
-
+            userList = userRepository.findUserByOrganizations(idOrg);
+            List <String> usertListNames = userList.stream().map(n -> n.getUsername()).collect(Collectors.toList());
 
             if (userList.isEmpty()) {
                 return new ResponseEntity<>(HttpStatus.NO_CONTENT);
             }
 
-            return new ResponseEntity<>(userList, HttpStatus.OK);
+            return new ResponseEntity<>(usertListNames, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }

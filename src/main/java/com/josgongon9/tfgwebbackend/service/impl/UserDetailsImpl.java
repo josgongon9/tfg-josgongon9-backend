@@ -1,4 +1,4 @@
-package com.josgongon9.tfgwebbackend.service;
+package com.josgongon9.tfgwebbackend.service.impl;
 
 import java.util.Collection;
 import java.util.List;

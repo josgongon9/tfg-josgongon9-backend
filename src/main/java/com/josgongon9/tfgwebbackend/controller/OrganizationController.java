@@ -3,8 +3,6 @@ package com.josgongon9.tfgwebbackend.controller;
 import com.josgongon9.tfgwebbackend.model.Organization;
 import com.josgongon9.tfgwebbackend.model.response.OrganizationResponse;
 import com.josgongon9.tfgwebbackend.repository.OrganizationRepository;
-import com.josgongon9.tfgwebbackend.repository.UserRepository;
-import com.josgongon9.tfgwebbackend.security.jwt.JwtUtils;
 import com.josgongon9.tfgwebbackend.service.IOrganizationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -27,18 +25,13 @@ public class OrganizationController {
     @Autowired
     OrganizationRepository organizationRepository;
 
-    @Autowired
-    UserRepository userRepository;
 
-    @Autowired
-    JwtUtils jwtUtils;
-
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize(" hasRole('MODERATOR') or hasRole('ADMIN')")
     @GetMapping("/all")
-    public ResponseEntity getAllOrganizations(@RequestHeader String authorization) {
+    public ResponseEntity getAllOrganizations() {
         try {
+            List<Organization> organizations = organizationService.getAll();
 
-            List<Organization> organizations = organizationRepository.findAll();
 
             if (organizations.isEmpty()) {
                 return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -74,6 +67,19 @@ public class OrganizationController {
     }
 
     @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
+    @GetMapping("/findByUserId")
+    public ResponseEntity getOrganizationByUser(@RequestParam("idUser") String idUser) {
+
+
+        try {
+            return new ResponseEntity<>(organizationService.getOrganizationByUser(idUser), HttpStatus.OK);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+
+        }
+    }
+
+    @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
     @PutMapping("/{id}")
     public ResponseEntity updateOrganization(@PathVariable("id") String id, @RequestBody OrganizationResponse organizationResponse) {
         try {
@@ -100,6 +106,18 @@ public class OrganizationController {
     public ResponseEntity updateUsers(@RequestParam("id") String id, @RequestParam("idUser") String idUser) {
         try {
             return new ResponseEntity<>(organizationService.updateUsers(id, idUser), HttpStatus.CREATED);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+
+        }
+    }
+
+    @PreAuthorize("hasRole('MODERATOR') or hasRole('ADMIN')")
+    @PutMapping("/updateMods")
+    public ResponseEntity updateMods(@RequestParam("id") String id, @RequestParam("idUser") String idUser) {
+        try {
+            organizationService.updateMods(id, idUser);
+            return new ResponseEntity<>(HttpStatus.OK);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
 
