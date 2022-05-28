@@ -56,9 +56,9 @@ public class VacationServiceImpl extends BasicServiceImpl implements IVacationSe
     public void deleteVacation(String id) {
         ObjectId idVac = new ObjectId(id);
         List<User> userList = userRepository.findUserByVacation(idVac);
-        for (User mod : userList) {
-            mod.getOrganizations().removeIf(x -> x.getId().equals(id));
-            userRepository.save(mod);
+        for (User user : userList) {
+            user.getVacations().removeIf(x -> x.getId().equals(id));
+            userRepository.save(user);
         }
 
         vacationRepository.deleteById(id);
