@@ -26,7 +26,7 @@ public class AlertController {
     AlertRepository alertRepository;
 
 
-    @PreAuthorize("hasRole('MODERATOR') or hasRole('ADMIN')")
+    @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
     @GetMapping("/all")
     public ResponseEntity<List<Alert>> getAllAlerts() {
         try {
@@ -43,7 +43,7 @@ public class AlertController {
         }
     }
 
-    @PreAuthorize("hasRole('MODERATOR') or hasRole('ADMIN')")
+    @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
     @GetMapping("/alertsByOrg/{idOrg}")
     public ResponseEntity<List<Alert>> getAllByOrg(@PathVariable("idOrg") String idOrg) {
         try {
@@ -60,7 +60,19 @@ public class AlertController {
         }
     }
 
-    @PreAuthorize("hasRole('MODERATOR') or hasRole('ADMIN')")
+    @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
+    @GetMapping("/showByOrg/{idOrg}")
+    public ResponseEntity getShowByOrg(@PathVariable("idOrg") String idOrg) {
+        try {
+
+            return new ResponseEntity<>(alertService.getShowByOrg(idOrg), HttpStatus.OK);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(e.getMessage());
+        }
+    }
+
+
+    @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
     @GetMapping("/alerts/{id}")
     public ResponseEntity<Alert> getAlertById(@PathVariable("id") String id) {
         Optional<Alert> alertData = alertRepository.findById(id);
