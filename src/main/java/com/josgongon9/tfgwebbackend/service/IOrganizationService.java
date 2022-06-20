@@ -21,4 +21,8 @@ public interface IOrganizationService {
     void updateMods(String id, String idUser) throws Exception;;
 
     List<Organization> getAll();
+
+    List<Boolean> getUserOtherOrg(String idOrg);
+
+    List<String> getOrganizationsByAlert();
 }

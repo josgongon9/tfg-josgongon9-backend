@@ -10,10 +10,7 @@ import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @Service
 public class AlertServiceImpl extends BasicServiceImpl implements IAlertService {
@@ -59,5 +56,16 @@ public class AlertServiceImpl extends BasicServiceImpl implements IAlertService 
         alertRes.setShow(alert.getShow());
         alertRepository.save(alertRes);
         return alertRes;
+    }
+
+    @Override
+    public Alert getShowByOrg(String idOrg) throws MyOwnException {
+        Alert res = null;
+        Organization organization = organizationRepository.findById(idOrg).orElseThrow(() -> new MyOwnException("Organizacion no encontrada"));
+        List<Alert> allAlerts = organization.getAlerts();
+        if (!allAlerts.isEmpty()) {
+            res = allAlerts.stream().filter(x -> x.getShow().equals(true)).sorted(Comparator.comparing(Alert::getF_alta).reversed()).findFirst().orElseThrow(() -> new MyOwnException("No hay alertas para mostrat"));
+        }
+        return res;
     }
 }

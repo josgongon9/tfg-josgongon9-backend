@@ -1,17 +1,20 @@
 package com.josgongon9.tfgwebbackend.service.impl;
 
 import com.josgongon9.tfgwebbackend.exception.EntityNotFoundException;
+import com.josgongon9.tfgwebbackend.exception.MyOwnException;
 import com.josgongon9.tfgwebbackend.model.TimeEntry;
 import com.josgongon9.tfgwebbackend.model.User;
 import com.josgongon9.tfgwebbackend.repository.TimeEntryRepository;
 import com.josgongon9.tfgwebbackend.service.ITimeEntryService;
+import org.apache.commons.lang3.time.DateUtils;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 
 @Service
 public class TimeEntryServiceImpl extends BasicServiceImpl implements ITimeEntryService {
@@ -53,4 +56,48 @@ public class TimeEntryServiceImpl extends BasicServiceImpl implements ITimeEntry
 
     }
 
+    @Override
+    public LocalTime getNowTimeEntry(String idUser) {
+        LocalTime res = null;
+        User user = userRepository.findById(idUser).orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado"));
+        List<TimeEntry> allTimeEntryUser = user.getTimeEntries();
+        if (!allTimeEntryUser.isEmpty()) {
+            for (TimeEntry t : allTimeEntryUser) {
+                Date now = new Date();
+                boolean samedate = DateUtils.isSameDay(t.getDate(), now);
+                if (samedate) {
+                    LocalTime sum = LocalTime.parse(t.getTotalTime(), DateTimeFormatter.ofPattern("H:m"));
+                    if (!Objects.isNull(res)) {
+                        res = res.plusHours(sum.getHour()).plusMinutes(sum.getMinute());
+                    } else {
+                        res = sum;
+                    }
+                }
+            }
+        }
+        return res;
+    }
+
+    @Override
+    public Date getLastTimeEntry(String idUser) throws MyOwnException {
+        Date res = null;
+        User user = userRepository.findById(idUser).orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado"));
+        List<TimeEntry> allTimeEntryUser = user.getTimeEntries();
+        if (!allTimeEntryUser.isEmpty()) {
+            res = allTimeEntryUser.stream().sorted(Comparator.comparing(TimeEntry::getDate).reversed()).findFirst().orElseThrow(() -> new MyOwnException("No hay entradas de tiempo para mostrar")).getDate();
+        }
+        return res;
+    }
+
+    @Override
+    public List<TimeEntry> getAllTimeEntrysByUser(String idUser) {
+        List<TimeEntry> res = new ArrayList<>();
+        User user = userRepository.findById(idUser).orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado"));
+
+        res = user.getTimeEntries();
+
+        return res;
+    }
 }
+
+

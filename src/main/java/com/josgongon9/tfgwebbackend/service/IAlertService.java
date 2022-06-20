@@ -13,4 +13,6 @@ public interface IAlertService {
     void deleteAlert(String id);
 
     Alert updateStateAlert(Alert alert, String id) throws MyOwnException;
+
+   Alert getShowByOrg(String idOrg) throws MyOwnException;
 }

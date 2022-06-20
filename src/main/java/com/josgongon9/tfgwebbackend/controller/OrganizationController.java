@@ -80,6 +80,36 @@ public class OrganizationController {
     }
 
     @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
+    @GetMapping("/userOtherOrg")
+    public ResponseEntity getUserOtherOrg(@RequestParam("idUser") String idUser, @RequestParam("idOrg") String idOrg) {
+
+
+        try {
+            return new ResponseEntity<>(organizationService.getUserOtherOrg(idOrg), HttpStatus.OK);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+
+        }
+    }
+
+
+    @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
+    @GetMapping("/organizationsByAlert")
+    public ResponseEntity getOrganizationsByAlert() {
+
+
+        try {
+            return new ResponseEntity<>(organizationService.getOrganizationsByAlert(), HttpStatus.OK);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+
+        }
+    }
+
+
+
+
+    @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
     @PutMapping("/{id}")
     public ResponseEntity updateOrganization(@PathVariable("id") String id, @RequestBody OrganizationResponse organizationResponse) {
         try {
