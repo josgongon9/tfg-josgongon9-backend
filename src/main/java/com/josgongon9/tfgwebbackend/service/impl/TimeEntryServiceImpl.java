@@ -68,8 +68,7 @@ public class TimeEntryServiceImpl extends BasicServiceImpl implements ITimeEntry
                 if (samedate) {
                     LocalTime sum = LocalTime.parse(t.getTotalTime(), DateTimeFormatter.ofPattern("H:m"));
                     if (!Objects.isNull(res)) {
-                        res = res.plusHours(sum.getHour())
-                                .plusMinutes(sum.getMinute());
+                        res = res.plusHours(sum.getHour()).plusMinutes(sum.getMinute());
                     } else {
                         res = sum;
                     }
@@ -87,6 +86,16 @@ public class TimeEntryServiceImpl extends BasicServiceImpl implements ITimeEntry
         if (!allTimeEntryUser.isEmpty()) {
             res = allTimeEntryUser.stream().sorted(Comparator.comparing(TimeEntry::getDate).reversed()).findFirst().orElseThrow(() -> new MyOwnException("No hay entradas de tiempo para mostrar")).getDate();
         }
+        return res;
+    }
+
+    @Override
+    public List<TimeEntry> getAllTimeEntrysByUser(String idUser) {
+        List<TimeEntry> res = new ArrayList<>();
+        User user = userRepository.findById(idUser).orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado"));
+
+        res = user.getTimeEntries();
+
         return res;
     }
 }

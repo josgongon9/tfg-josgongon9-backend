@@ -19,4 +19,6 @@ public interface ITimeEntryService {
      LocalTime getNowTimeEntry(String idUser);
 
      Date getLastTimeEntry(String idUser) throws MyOwnException;
+
+     List<TimeEntry> getAllTimeEntrysByUser(String idUser);
 }

@@ -197,6 +197,5 @@ public class OrganizationServiceImpl extends BasicServiceImpl implements IOrgani
         return res;
     }
 }
-//628220f133615b5a628cfab9
 
 

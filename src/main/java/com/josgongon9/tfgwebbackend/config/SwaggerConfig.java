@@ -39,7 +39,7 @@ public class SwaggerConfig {
     private String url;
     @Value("${swagger.api.generalData.email}")
     private String email;
-    @Value("${bezkoder.app.jwtSecret}")
+    @Value("${backend.jwtSecret}")
     private String CLIENT_SECRET;
 
     private String CLIENT_ID = "prueba";

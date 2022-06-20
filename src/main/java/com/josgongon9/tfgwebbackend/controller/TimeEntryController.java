@@ -48,6 +48,24 @@ public class TimeEntryController {
     }
 
     @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
+    @GetMapping("/timeEntriesByUser")
+    public ResponseEntity getAllTimeEntrysByUser(@RequestParam String idUser) {
+        try {
+            List<TimeEntry> timeEntries = timeEntryService.getAllTimeEntrysByUser(idUser);
+
+            if (timeEntries.isEmpty()) {
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            }
+
+            return new ResponseEntity<>(timeEntries, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+
+
+    @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
     @GetMapping("/nowTimeEntry")
     public ResponseEntity getNowTimeEntry(@RequestParam String idUser) {
         try {
