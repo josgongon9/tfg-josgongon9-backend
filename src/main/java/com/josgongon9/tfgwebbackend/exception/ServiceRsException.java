@@ -7,7 +7,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.springframework.http.HttpStatus;
 
-import javax.sql.rowset.serial.SerialException;
 import java.util.ArrayList;
 import java.util.List;
 

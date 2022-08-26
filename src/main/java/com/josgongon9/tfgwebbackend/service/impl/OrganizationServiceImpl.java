@@ -1,11 +1,11 @@
 package com.josgongon9.tfgwebbackend.service.impl;
 
 import com.josgongon9.tfgwebbackend.exception.MyOwnException;
-import com.josgongon9.tfgwebbackend.model.ERole;
-import com.josgongon9.tfgwebbackend.model.Organization;
-import com.josgongon9.tfgwebbackend.model.User;
+import com.josgongon9.tfgwebbackend.model.*;
 import com.josgongon9.tfgwebbackend.model.response.OrganizationResponse;
+import com.josgongon9.tfgwebbackend.repository.AlertRepository;
 import com.josgongon9.tfgwebbackend.repository.OrganizationRepository;
+import com.josgongon9.tfgwebbackend.repository.RoleRepository;
 import com.josgongon9.tfgwebbackend.service.IOrganizationService;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -21,6 +22,13 @@ public class OrganizationServiceImpl extends BasicServiceImpl implements IOrgani
 
     @Autowired
     OrganizationRepository organizationRepository;
+
+    @Autowired
+    RoleRepository roleRepository;
+
+    @Autowired
+    AlertRepository alertRepository;
+
 
     @Override
     @Transactional
@@ -60,7 +68,7 @@ public class OrganizationServiceImpl extends BasicServiceImpl implements IOrgani
         List<String> modListUser = organization.getModerador();
         List<User> modList = userRepository.findAllByUsernameIn(modListUser);
         Optional<Organization> organizationBBDD = organizationRepository.findById(organization.getId());
-        if (this.getUser().getRoles().stream().filter(role -> role.getName().equals(ERole.ROLE_ADMIN)).findAny().isPresent()) {
+        if (this.getUser().getRoles().stream().filter(role -> role.getName().equals(ERole.ROLE_ADMIN) ||  role.getName().equals(ERole.ROLE_MODERATOR)).findAny().isPresent()) {
             if (!modList.isEmpty() && modList.stream().allMatch(user -> user.getRoles().stream().allMatch(role -> role.getName().equals(ERole.ROLE_MODERATOR)))) {
                 if (organizationBBDD.isPresent()) {
                     organizationRes = organizationRepository.save(organizationUpdate);
@@ -125,7 +133,7 @@ public class OrganizationServiceImpl extends BasicServiceImpl implements IOrgani
         ObjectId idOrg = new ObjectId(id);
         List<User> listModByOrg = userRepository.findUserByOrganizations(idOrg);
 
-        if (!listModByOrg.stream().anyMatch(x -> x.getId().equals(idUser))){
+        if (!listModByOrg.stream().anyMatch(x -> x.getId().equals(idUser))) {
             mod.getOrganizations().add(organizationBBDD);
         } else {
             mod.getOrganizations().removeIf(x -> x.getId().equals(id));
@@ -137,14 +145,57 @@ public class OrganizationServiceImpl extends BasicServiceImpl implements IOrgani
     @Override
     public List<Organization> getAll() {
         List<Organization> listOrg = new ArrayList<>();
-        if(this.getRoles().contains(ERole.ROLE_ADMIN)) {
+        if (this.getRoles().contains(ERole.ROLE_ADMIN)) {
             listOrg = organizationRepository.findAll();
-        }else if (this.getRoles().contains(ERole.ROLE_MODERATOR)){
+        } else if (this.getRoles().contains(ERole.ROLE_MODERATOR)) {
             listOrg = this.getUser().getOrganizations();
         }
         return listOrg;
     }
-}
 
+    @Override
+    public List<Boolean> getUserOtherOrg(String idOrg) {
+        List<Boolean> res = new ArrayList<>();
+        ObjectId userId = new ObjectId();
+        //Pertenece el usuario a alguna otra organizacion??
+
+        ERole erole = ERole.valueOf(ERole.ROLE_USER.name());
+        List<User> rolList = new ArrayList<User>();
+        Role modRole = roleRepository.findByName(erole).orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+        ObjectId obj = new ObjectId(modRole.getId());
+
+        rolList = userRepository.findAllByRole(obj);
+
+        for (User user : rolList) {
+
+            userId = new ObjectId(user.getId());
+            Organization organization = organizationRepository.findOrganizationByUsuarios(userId);
+
+            if (!Objects.isNull(organization) && !Objects.equals(organization.getId(), idOrg)) {
+                res.add(true);
+            } else {
+                res.add(false);
+
+            }
+        }
+
+
+        return res;
+    }
+
+    @Override
+    public List<String> getOrganizationsByAlert() {
+        List<String> res = new ArrayList<>();
+        List<Alert> allAlert = alertRepository.findAll();
+        for (Alert a : allAlert) {
+            ObjectId obj = new ObjectId(a.getId());
+            Organization org = organizationRepository.findOrganizationByAlert(obj);
+            res.add(org.getName());
+        }
+
+
+        return res;
+    }
+}
 
 

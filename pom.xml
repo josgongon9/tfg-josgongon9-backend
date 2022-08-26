@@ -11,7 +11,7 @@
 	</parent>
 	<groupId>com.josgongon9</groupId>
 	<artifactId>tfg-web-backend</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>1.0.0</version>
 	<name>tfg-web-backend</name>
 	<description>Backend for web application</description>
 	<properties>
@@ -106,6 +106,11 @@
 		<version>2.23.0</version>
 		<scope>test</scope>
 	</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+			<version>3.12.0</version>
+		</dependency>
 	</dependencies>
 
 
