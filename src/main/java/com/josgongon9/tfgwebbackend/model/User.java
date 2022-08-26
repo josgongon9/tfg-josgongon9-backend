@@ -18,7 +18,6 @@ import lombok.Data;
 import org.springframework.data.mongodb.core.mapping.DocumentReference;
 
 @Document(collection = "users")
-@EqualsAndHashCode
 @Data public class User {
   @Id
   private String id;
