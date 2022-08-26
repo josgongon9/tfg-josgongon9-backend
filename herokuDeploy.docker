@@ -1,0 +1,16 @@
+# Iniciar sesión en heroku
+# La clave api de heroku se encuentra en la configuración de la cuenta
+# docker login -u _ -p <TU CLAVE HEROKU API> registry.heroku.com
+docker login -u _ -p d894b876-8361-458c-bd18-d9e98b6c282a registry.heroku.com
+
+#Construir las aplicación y etiquetarlas respectivamente
+docker build --file=frontend.dockerfile --rm=true -t registry.heroku.com/tfg-josgongon9-frontend/web.
+docker build --file=backend.dockerfile --rm=true -t registry.heroku.com/tfg-josgongon9-backend/web.
+
+# Subir imagenes a Heroku
+docker push registry.heroku.com/tfg-josgongon9-frontend/web
+docker push registry.heroku.com/tfg-josgongon9-backend/web
+
+# Arrancar las aplicaciones
+heroku container:release web -a tfg-josgongon9-frontend
+heroku container:release web -a tfg-josgongon9-backend

@@ -68,7 +68,7 @@ public class OrganizationServiceImpl extends BasicServiceImpl implements IOrgani
         List<String> modListUser = organization.getModerador();
         List<User> modList = userRepository.findAllByUsernameIn(modListUser);
         Optional<Organization> organizationBBDD = organizationRepository.findById(organization.getId());
-        if (this.getUser().getRoles().stream().filter(role -> role.getName().equals(ERole.ROLE_ADMIN)).findAny().isPresent()) {
+        if (this.getUser().getRoles().stream().filter(role -> role.getName().equals(ERole.ROLE_ADMIN) ||  role.getName().equals(ERole.ROLE_MODERATOR)).findAny().isPresent()) {
             if (!modList.isEmpty() && modList.stream().allMatch(user -> user.getRoles().stream().allMatch(role -> role.getName().equals(ERole.ROLE_MODERATOR)))) {
                 if (organizationBBDD.isPresent()) {
                     organizationRes = organizationRepository.save(organizationUpdate);
