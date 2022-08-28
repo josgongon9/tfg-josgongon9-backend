@@ -11,6 +11,6 @@ public interface IVacationService {
 
      List<Vacation> getAllByUser(String userId) throws MyOwnException;
 
-      void deleteVacation(String id);
+      void deleteVacation(String id) throws MyOwnException;
 
 }

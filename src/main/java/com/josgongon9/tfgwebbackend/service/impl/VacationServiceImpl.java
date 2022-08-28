@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -29,7 +28,6 @@ public class VacationServiceImpl extends BasicServiceImpl implements IVacationSe
 
     public Vacation createVacation(VacationResponse vacation) throws MyOwnException {
         Vacation _vacation = vacationRepository.save(new Vacation(vacation.getId(), vacation.getTitle(), vacation.getDescription(), false, vacation.getStartDate(), vacation.getEndDate(), "PROPOUSE"));
-        //int diff =  countBusinessDaysBetween(vacation.getStartDate(), vacation.getEndDate());
         User user = this.getUser();
         user.getVacations().add(_vacation);
         Integer daysOfV = user.getDaysOfVacations();
@@ -43,22 +41,22 @@ public class VacationServiceImpl extends BasicServiceImpl implements IVacationSe
     }
 
     public List<Vacation> getAllByUser(String userId) throws MyOwnException {
-        List<Vacation> vacations = new ArrayList<Vacation>();
-
         User userRes = userRepository.findById(userId).orElseThrow(() -> new MyOwnException("Usuario no encontrado"));
-
-        vacations = userRes.getVacations();
-
-        return vacations;
+        return userRes.getVacations();
     }
 
 
-    public void deleteVacation(String id) {
+    public void deleteVacation(String id) throws MyOwnException {
         ObjectId idVac = new ObjectId(id);
         List<User> userList = userRepository.findUserByVacation(idVac);
+        Vacation vacation = vacationRepository.findById(idVac.toString()).orElseThrow(() -> new MyOwnException("Vacación no encontrada"));
         for (User user : userList) {
             user.getVacations().removeIf(x -> x.getId().equals(id));
+            Integer daysOfV = user.getDaysOfVacations();
+            int diff =  countBusinessDaysBetween(vacation.getStartDate(), vacation.getEndDate());
+            user.setDaysOfVacations(daysOfV + diff);
             userRepository.save(user);
+
         }
 
         vacationRepository.deleteById(id);
@@ -84,7 +82,7 @@ public class VacationServiceImpl extends BasicServiceImpl implements IVacationSe
         Predicate<LocalDate> isWeekend = date -> date.getDayOfWeek() == DayOfWeek.SATURDAY
                 || date.getDayOfWeek() == DayOfWeek.SUNDAY;
 
-        List<LocalDate> businessDays = startDate.datesUntil(endDate)
+        List<LocalDate> businessDays = startDate.datesUntil(endDate.plusDays(1))
                 .filter(isWeekend.negate())
                 .collect(Collectors.toList());
 
