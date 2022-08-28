@@ -65,11 +65,8 @@ public class OrganizationServiceImpl extends BasicServiceImpl implements IOrgani
     public Organization updateOrganization(OrganizationResponse organization) throws Exception {
         Organization organizationRes;
         Organization organizationUpdate = new Organization(organization);
-        List<String> modListUser = organization.getModerador();
-        List<User> modList = userRepository.findAllByUsernameIn(modListUser);
         Optional<Organization> organizationBBDD = organizationRepository.findById(organization.getId());
         if (this.getUser().getRoles().stream().filter(role -> role.getName().equals(ERole.ROLE_ADMIN) ||  role.getName().equals(ERole.ROLE_MODERATOR)).findAny().isPresent()) {
-            if (!modList.isEmpty() && modList.stream().allMatch(user -> user.getRoles().stream().allMatch(role -> role.getName().equals(ERole.ROLE_MODERATOR)))) {
                 if (organizationBBDD.isPresent()) {
                     organizationRes = organizationRepository.save(organizationUpdate);
                 } else {
@@ -77,10 +74,7 @@ public class OrganizationServiceImpl extends BasicServiceImpl implements IOrgani
 
                 }
 
-            } else {
-                throw new MyOwnException("Moderadores no permitido");
-            }
-
+          
         } else {
             throw new MyOwnException("Usuario no permitido");
         }
