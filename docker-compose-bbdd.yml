@@ -1,0 +1,8 @@
+version: '3'
+services:
+  josgongon9-mnongodb-bbdd:
+    image: mongo:4.2.2
+    environment:
+      MONGO_INITDB_DATABASE: Pulsd
+    ports:
+      - 27017:27017
