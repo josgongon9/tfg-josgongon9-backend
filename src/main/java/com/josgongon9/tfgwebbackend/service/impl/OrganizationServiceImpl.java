@@ -74,7 +74,7 @@ public class OrganizationServiceImpl extends BasicServiceImpl implements IOrgani
 
                 }
 
-          
+
         } else {
             throw new MyOwnException("Usuario no permitido");
         }

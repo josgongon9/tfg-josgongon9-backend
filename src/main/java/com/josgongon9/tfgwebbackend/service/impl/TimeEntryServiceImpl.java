@@ -35,7 +35,7 @@ public class TimeEntryServiceImpl extends BasicServiceImpl implements ITimeEntry
     }
 
     public TimeEntry createTimeEntry(TimeEntry timeEntry) {
-        TimeEntry _timeEntry = timeEntryRepository.save(new TimeEntry(timeEntry.getDate(), timeEntry.getComment(), timeEntry.getStartTime(), timeEntry.getEndTime(), timeEntry.getTotalTime()));
+        TimeEntry _timeEntry = timeEntryRepository.save(timeEntry);
 
         User user = userRepository.findByUsername(this.getUser().getUsername()).orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado"));
 
